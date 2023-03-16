@@ -77,6 +77,7 @@ int main()
 
         //process input
         COMP3011_PollEvents();
+
     }
 
     //deinit
