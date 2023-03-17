@@ -8,7 +8,6 @@
 
 vec3 colour_buffer[BUFFER_W][BUFFER_H];
 
-/*DONE!*/
 void ClearColourBuffer(float col[4])
 {
 	/*Convert between 0-255 and fill the colour_buffer array.*/
@@ -104,7 +103,7 @@ void TransformToScreenSpace(float w, float h, triangle* t)
 {
 	t->v1.pos.x = float((t->v1.pos.x + 1.0) * (w / 2));
 	t->v1.pos.y = float((t->v1.pos.y + 1.0) * (h / 2));
-
+	
 	t->v2.pos.x = float((t->v2.pos.x + 1.0) * (w / 2));
 	t->v2.pos.y = float((t->v2.pos.y + 1.0) * (h / 2));
 
@@ -132,11 +131,11 @@ void ComputeBarycentricCoordinates(int px, int py, triangle t, float& alpha, flo
 	float lineABP = ((t.v2.pos.y - t.v1.pos.y) * px) + ((t.v1.pos.x - t.v2.pos.x) * py) + (t.v2.pos.x * t.v1.pos.y) - (t.v1.pos.x * t.v2.pos.y);
 
 	float lineABC = ((t.v2.pos.y - t.v1.pos.y) * t.v3.pos.x) + ((t.v1.pos.x - t.v2.pos.x) * t.v3.pos.y) + (t.v2.pos.x * t.v1.pos.y) - (t.v1.pos.x * t.v2.pos.y);
-
+	
 	gamma = lineABP / lineABC;
+
 }
 
-/*DONE*/
 void ShadeFragment(triangle t, float& alpha, float& beta, float& gamma, float& r, float& g, float& b)
 {
 	r = alpha * t.v1.col.x * 255;
