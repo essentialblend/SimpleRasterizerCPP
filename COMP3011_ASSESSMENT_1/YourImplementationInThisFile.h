@@ -156,6 +156,7 @@ void Rasterise(triangle* tris, int num_tris)
 		/*For every pixel in x.*/
 		for (int pX = 0; pX < BUFFER_W; pX++)
 		{
+			/*For every triangle.*/
 			for (int triNum = 0; triNum < num_tris; triNum++)
 			{
 				/*Compute their barycentric coordinates.*/
