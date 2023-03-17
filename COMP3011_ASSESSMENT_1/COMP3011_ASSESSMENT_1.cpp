@@ -66,11 +66,11 @@ int main()
     while (!COMP3011_WindowShouldClose())
     {
         //clear the screen
-        float bgd[] = {1, 1, 1};
+        float bgd[] = { 0.3f, 0.7f, 0.2f, 1.f };
         ClearColourBuffer(bgd);
 
         //draw
-        Draw(6);
+        Draw(3);
 
         //sawp buffers
         COMP3011_SwapBuffers();
