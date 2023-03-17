@@ -5,49 +5,8 @@
 
 #define BUFFER_W PIXEL_W
 #define BUFFER_H PIXEL_H
+
 vec3 colour_buffer[BUFFER_W][BUFFER_H];
-
-/*Class for a Barycentric coordinate object.*/
-class BarycentricCoordinate
-{
-private:
-
-
-public:
-	float alpha;
-	float beta;
-	float gamma;
-	BarycentricCoordinate()
-	{
-		alpha = 0.0f;
-		beta = 0.0f;
-		gamma = 0.0f;
-	}
-	float getAlpha()
-	{
-		return alpha;
-	}
-	float getBeta()
-	{
-		return beta;
-	}
-	float getGamma()
-	{
-		return gamma;
-	}
-	void setAlpha(float a)
-	{
-		alpha = a;
-	}
-	void setBeta(float b)
-	{
-		beta = b;
-	}
-	void setGamma(float c)
-	{
-		gamma = c;
-	}
-};
 
 /*DONE!*/
 void ClearColourBuffer(float col[4])
@@ -66,7 +25,7 @@ void ClearColourBuffer(float col[4])
 	CopyBufferToDisiplayBuffer(colour_buffer);
 }
 
-/*DONE*/
+/*Note- Currently limited to only position and color attributes per vertex for simplicity. Adding more attributes will fail.*/
 triangle* AssembleTriangles(float* verts, int num_verts, int* num_tris, int vertArrSize)
 {
 	//Create a new dynamic array of triangle objects and initialize all their components to 0.0f.
@@ -105,72 +64,56 @@ triangle* AssembleTriangles(float* verts, int num_verts, int* num_tris, int vert
 	
 	/*Assemble each triangle*/
 	int plusCount = 0;
-	for (int triangleNumber = 0; triangleNumber < *num_tris; triangleNumber++)
+	for (int triNum = 0; triNum < *num_tris; triNum++)
 	{
 		for (int i = plusCount; i < vertArrSize; i += vertArrSize)
 		{
 			/*Vertex 1*/
-			arr_assembledTris[triangleNumber].v1.pos.x = verts[i + 0];
-			arr_assembledTris[triangleNumber].v1.pos.y = verts[i + 1];
-			arr_assembledTris[triangleNumber].v1.pos.z = verts[i + 2];
+			arr_assembledTris[triNum].v1.pos.x = verts[i + 0];
+			arr_assembledTris[triNum].v1.pos.y = verts[i + 1];
+			arr_assembledTris[triNum].v1.pos.z = verts[i + 2];
 
-			arr_assembledTris[triangleNumber].v1.col.x = verts[i + 3];
-			arr_assembledTris[triangleNumber].v1.col.y = verts[i + 4];
-			arr_assembledTris[triangleNumber].v1.col.z = verts[i + 5];
+			arr_assembledTris[triNum].v1.col.x = verts[i + 3];
+			arr_assembledTris[triNum].v1.col.y = verts[i + 4];
+			arr_assembledTris[triNum].v1.col.z = verts[i + 5];
 
 			/*Vertex 2*/
-			arr_assembledTris[triangleNumber].v2.pos.x = verts[i + 6];
-			arr_assembledTris[triangleNumber].v2.pos.y = verts[i + 7];
-			arr_assembledTris[triangleNumber].v2.pos.z = verts[i + 8];
+			arr_assembledTris[triNum].v2.pos.x = verts[i + 6];
+			arr_assembledTris[triNum].v2.pos.y = verts[i + 7];
+			arr_assembledTris[triNum].v2.pos.z = verts[i + 8];
 
-			arr_assembledTris[triangleNumber].v2.col.x = verts[i + 9];
-			arr_assembledTris[triangleNumber].v2.col.y = verts[i + 10];
-			arr_assembledTris[triangleNumber].v2.col.z = verts[i + 11];
+			arr_assembledTris[triNum].v2.col.x = verts[i + 9];
+			arr_assembledTris[triNum].v2.col.y = verts[i + 10];
+			arr_assembledTris[triNum].v2.col.z = verts[i + 11];
 
 			/*Vertex 3*/
-			arr_assembledTris[triangleNumber].v3.pos.x = verts[i + 12];
-			arr_assembledTris[triangleNumber].v3.pos.y = verts[i + 13];
-			arr_assembledTris[triangleNumber].v3.pos.z = verts[i + 14];
+			arr_assembledTris[triNum].v3.pos.x = verts[i + 12];
+			arr_assembledTris[triNum].v3.pos.y = verts[i + 13];
+			arr_assembledTris[triNum].v3.pos.z = verts[i + 14];
 
-			arr_assembledTris[triangleNumber].v3.col.x = verts[i + 15];
-			arr_assembledTris[triangleNumber].v3.col.y = verts[i + 16];
-			arr_assembledTris[triangleNumber].v3.col.z = verts[i + 17];
+			arr_assembledTris[triNum].v3.col.x = verts[i + 15];
+			arr_assembledTris[triNum].v3.col.y = verts[i + 16];
+			arr_assembledTris[triNum].v3.col.z = verts[i + 17];
 		}
 		plusCount += 18;
 	}
-
 	return arr_assembledTris;
 }
 
-/*DONE*/
-void TransformToScreenSpace(int w, int h, triangle* t)
+void TransformToScreenSpace(float w, float h, triangle* t)
 {
-	t->v1.pos.x = float((t->v1.pos.x + 1.0) * (BUFFER_W / 2));
-	t->v1.pos.y = float((t->v1.pos.y + 1.0) * (BUFFER_H / 2));
-	
-	t->v2.pos.x = float((t->v2.pos.x + 1.0) * (BUFFER_W / 2));
-	t->v2.pos.y = float((t->v2.pos.y + 1.0) * (BUFFER_H / 2));
+	t->v1.pos.x = (t->v1.pos.x + 1.0) * (w / 2);
+	t->v1.pos.y = (t->v1.pos.y + 1.0) * (h / 2);
 
-	t->v3.pos.x = float((t->v3.pos.x + 1.0) * (BUFFER_W / 2));
-	t->v3.pos.y = float((t->v3.pos.y + 1.0) * (BUFFER_H / 2));
+	t->v2.pos.x = (t->v2.pos.x + 1.0) * (w / 2);
+	t->v2.pos.y = (t->v2.pos.y + 1.0) * (h / 2);
 
-	std::cout << t->v1.pos.x << std::endl;
-	std::cout << t->v1.pos.y << std::endl;
-	std::cout << std::endl;
-	std::cout << t->v2.pos.x << std::endl;
-	std::cout << t->v2.pos.y << std::endl;
-	std::cout << std::endl;
-	std::cout << t->v3.pos.x << std::endl;
-	std::cout << t->v3.pos.y << std::endl;
-	std::cout << std::endl;
+	t->v3.pos.x = (t->v3.pos.x + 1.0) * (w / 2);
+	t->v3.pos.y = (t->v3.pos.y + 1.0) * (h / 2);
 }
 
-/*DONE*/
 void ComputeBarycentricCoordinates(int px, int py, triangle t, float& alpha, float& beta, float& gamma)
-{
-	/*A = (300, 25), B = (750, 475), C = (250, 425)*/
-	/*alpha = line(BCP)/line(BCA), beta = line(ACP)/line(ACB), gamma = line(ABP)/(ABC)*/
-	
+{	
 	/*Alpha*/
 	float lineBCP = ((t.v3.pos.y - t.v2.pos.y) * px) + ((t.v2.pos.x - t.v3.pos.x) * py) + (t.v3.pos.x * t.v2.pos.y) - (t.v2.pos.x * t.v3.pos.y);
 	
@@ -186,58 +129,75 @@ void ComputeBarycentricCoordinates(int px, int py, triangle t, float& alpha, flo
 	beta = lineACP / lineACB;
 
 	/*Gamma*/
-	float lineABP = ((t.v2.pos.y - t.v1.pos.y) * px) + ((t.v1.pos.x - t.v2.pos.x) * py) + (t.v2.pos.x - t.v1.pos.y) - (t.v1.pos.x - t.v2.pos.y);
+	float lineABP = ((t.v2.pos.y - t.v1.pos.y) * px) + ((t.v1.pos.x - t.v2.pos.x) * py) + (t.v2.pos.x * t.v1.pos.y) - (t.v1.pos.x * t.v2.pos.y);
 
-	float lineABC = ((t.v2.pos.y - t.v1.pos.y) * t.v3.pos.x) + ((t.v1.pos.x - t.v2.pos.x) * t.v3.pos.y) + (t.v2.pos.x - t.v1.pos.y) - (t.v1.pos.x - t.v2.pos.y);
+	float lineABC = ((t.v2.pos.y - t.v1.pos.y) * t.v3.pos.x) + ((t.v1.pos.x - t.v2.pos.x) * t.v3.pos.y) + (t.v2.pos.x * t.v1.pos.y) - (t.v1.pos.x * t.v2.pos.y);
 
 	gamma = lineABP / lineABC;
 
 }
+
+/*DONE*/
 void ShadeFragment(triangle t, float& alpha, float& beta, float& gamma, float& r, float& g, float& b)
 {
-
+	r = alpha * t.v1.col.x * 255;
+	g = beta * t.v2.col.y * 255;
+	b = gamma * t.v3.col.z * 255;
 }
 
+/*DONE*/
 void Rasterise(triangle* tris, int num_tris)
 {
 	float alpha = 0;
 	float beta = 0;
 	float gamma = 0;
 
-	for (int pX = 0; pX < BUFFER_W; pX++)
+	/*For every pixel in y.*/
+	for (int pY = 0; pY < BUFFER_H; pY++)
 	{
-		for (int pY = 0; pY < BUFFER_H; pY++)
+		/*For every pixel in x.*/
+		for (int pX = 0; pX < BUFFER_W; pX++)
 		{
-			ComputeBarycentricCoordinates(pX, pY, tris[0], alpha, beta, gamma);
-
-			if (alpha >= 0 && alpha <= 1 && beta >= 0 && beta <= 1 && gamma >= 0 && gamma <= 1)
+			for (int triNum = 0; triNum < num_tris; triNum++)
 			{
-				colour_buffer[pX][pY].x = 80;
-				colour_buffer[pX][pY].y = 100;
-				colour_buffer[pX][pY].z = 250;
+				/*Compute their barycentric coordinates.*/
+				ComputeBarycentricCoordinates(pX, pY, tris[triNum], alpha, beta, gamma);
+
+				/*If 0 <= ABG <= 1, point in triangle.*/
+				if (alpha >= 0 && alpha <= 1 && beta >= 0 && beta <= 1 && gamma >= 0 && gamma <= 1)
+				{
+					/*Shade that pixel / write to colour buffer.*/
+					ShadeFragment(tris[triNum], alpha, beta, gamma, colour_buffer[pX][pY].x, colour_buffer[pX][pY].y, colour_buffer[pX][pY].z);
+				}
 			}
 		}
 	}
+	/*After writing to colour buffer, copy to display buffer to swap.*/
 	CopyBufferToDisiplayBuffer(colour_buffer);
 }
 
+/*DONE*/
 void Draw(int num_verts)
 {
-
+	/*Extrapolating number of triangles from vertices.*/
 	int numTris = num_verts / 3;
+	/*Extracting size of the vertices array using the base variable in vertices.h*/
 	int vertexArraySize = sizeof(verts) / sizeof(verts[0]);
 	
-	/*Assemble triangles.*/
+	/*Assemble a list of triangles.*/
 	triangle* triList = AssembleTriangles(verts, num_verts, &numTris, vertexArraySize);
 
-	/*Transform to screen space*/
-	for (int i = 0; i < numTris; i++)
+	/*For each triangle...*/
+	for (int triNum = 0; triNum < numTris; triNum++)
 	{
-		TransformToScreenSpace(BUFFER_W, BUFFER_H, &triList[i]);
+		/*Transform to screen space*/
+		TransformToScreenSpace(BUFFER_W, BUFFER_H, &triList[triNum]);
 	}
 
+	/*Rasterise*/
 	Rasterise(triList, numTris);
 
+	/*Handle mem.*/
 	delete[] triList;
 	triList = nullptr;
 }
