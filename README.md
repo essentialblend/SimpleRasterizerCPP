@@ -1,4 +1,7 @@
 # SimpleRasterizerCPP
 A simple bare-bones triangle rasterizer in C++ using SDL.
 
-WIP on a better one.
+Currently:
+
+- Renders a triangle.
+- Contains a simple super-sampled anti-aliasing implementation. 
